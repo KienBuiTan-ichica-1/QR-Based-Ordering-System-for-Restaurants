@@ -64,14 +64,14 @@ ul{padding-left:1.4em}
 <p><strong>Môi trường hoạt động</strong>
 - Khách dùng trình duyệt trên điện thoại (Chrome, Safari), không cần cài ứng dụng.
 - Nhân viên dùng trình duyệt trên máy tính bảng hoặc máy tính ở bếp và quầy.
-- Server chạy trên một máy chủ Linux có kết nối Internet.</p>
+- Server chạy trên máy chủ Windows (Windows Server) có kết nối Internet.</p>
 <p><strong>Ràng buộc thiết kế và triển khai</strong>
 - Web app, giao diện ưu tiên màn hình điện thoại.
 - Frontend: HTML/CSS/JavaScript với React. Backend: Node.js (Express). Cập nhật thời gian thực bằng WebSocket (Socket.IO). Cơ sở dữ liệu: PostgreSQL.
-- Chỉ thanh toán tại quầy (tiền mặt hoặc chuyển khoản, thu ngân xác nhận bằng tay). Không tích hợp cổng thanh toán.
+- Thanh toán tại quầy: hệ thống tạo mã QR chuyển khoản theo chuẩn VietQR, có sẵn số tiền và mã hoá đơn. Thu ngân xác nhận đã nhận tiền bằng tay. Không tích hợp cổng thanh toán, không tự động đối soát với ngân hàng.
 - Phạm vi một quán, một chi nhánh.
 - Tài liệu theo markdown kèm html, quản lý mã nguồn bằng Git.</p>
-<p><strong>Ngoài phạm vi:</strong> quản lý kho, nhân sự và lương, đặt bàn trước, giao hàng, khuyến mãi, ứng dụng mobile riêng.</p>
+<p><strong>Ngoài phạm vi:</strong> quản lý kho, nhân sự và lương, đặt bàn trước, giao hàng, khuyến mãi, tự động đối soát thanh toán, ứng dụng mobile riêng.</p>
 <h2>3. Giải pháp đề xuất</h2>
 <h3>3.1. Phần mềm</h3>
 <h4>3.1.1. Danh sách các chức năng phần mềm</h4>
@@ -109,8 +109,12 @@ ul{padding-left:1.4em}
 <td>Cập nhật trạng thái, báo hết món</td>
 </tr>
 <tr>
-<td>Là thu ngân, tôi muốn xem tổng tiền cả bàn và xác nhận đã thanh toán để đóng bàn</td>
-<td>Thanh toán và hoá đơn theo bàn</td>
+<td>Là thu ngân, tôi muốn chốt hoá đơn của bàn để hệ thống tính tổng tiền và hiện mã QR thanh toán</td>
+<td>Chốt hoá đơn, tạo QR thanh toán</td>
+</tr>
+<tr>
+<td>Là thu ngân, tôi muốn xác nhận đã nhận tiền để đóng bàn cho khách mới</td>
+<td>Xác nhận thanh toán, đóng bàn</td>
 </tr>
 <tr>
 <td>Là quản lý, tôi muốn thêm, sửa, ẩn món, đổi giá và tạo QR cho từng bàn</td>
@@ -153,7 +157,7 @@ ul{padding-left:1.4em}
 <tr>
 <td>3</td>
 <td>Thanh toán và hoá đơn theo bàn</td>
-<td>Hoá đơn gộp mọi món chưa huỷ của phiên. Sau khi thu ngân xác nhận thanh toán, phiên đóng và bàn sẵn sàng cho khách mới.</td>
+<td>Khi thu ngân chốt hoá đơn, hệ thống tính tổng các món chưa huỷ của phiên, không cho gọi thêm, rồi tạo mã QR chuyển khoản chứa số tiền và mã hoá đơn. Sau khi thu ngân xác nhận đã nhận tiền (QR hoặc tiền mặt), phiên đóng và bàn sẵn sàng cho khách mới.</td>
 </tr>
 <tr>
 <td>4</td>
@@ -175,7 +179,7 @@ ul{padding-left:1.4em}
          \----- HTTP + WebSocket ------/
                       |
               Server (Node.js, Express)
-              - API gọi món, thực đơn, hoá đơn, thống kê
+              - API gọi món, thực đơn, hoá đơn, QR thanh toán, thống kê
               - Xác thực và phân quyền
               - Socket.IO đẩy đơn mới / đổi trạng thái
                       |
@@ -214,7 +218,7 @@ ul{padding-left:1.4em}
 </tr>
 <tr>
 <td>Server</td>
-<td>VPS Linux, tối thiểu 2 vCPU, 2 GB RAM, 20 GB ổ đĩa</td>
+<td>Máy chủ Windows (Windows Server), tối thiểu 2 vCPU, 4 GB RAM, 40 GB ổ đĩa</td>
 </tr>
 <tr>
 <td>Mạng</td>
@@ -310,9 +314,9 @@ ul{padding-left:1.4em}
 </thead>
 <tbody>
 <tr>
-<td>Thuê VPS</td>
-<td>150.000 đ/tháng × 3 tháng</td>
-<td>450.000 đ</td>
+<td>Thuê máy chủ Windows (VPS)</td>
+<td>400.000 đ/tháng × 3 tháng</td>
+<td>1.200.000 đ</td>
 </tr>
 <tr>
 <td>Tên miền</td>
@@ -332,7 +336,7 @@ ul{padding-left:1.4em}
 <tr>
 <td><strong>Tổng</strong></td>
 <td></td>
-<td><strong>750.000 đ</strong></td>
+<td><strong>1.500.000 đ</strong></td>
 </tr>
 </tbody>
 </table>

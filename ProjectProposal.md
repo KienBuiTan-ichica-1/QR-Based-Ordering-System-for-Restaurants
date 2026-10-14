@@ -22,16 +22,16 @@ Phần mềm có bốn nhóm người dùng: khách, nhân viên bếp, thu ngâ
 **Môi trường hoạt động**
 - Khách dùng trình duyệt trên điện thoại (Chrome, Safari), không cần cài ứng dụng.
 - Nhân viên dùng trình duyệt trên máy tính bảng hoặc máy tính ở bếp và quầy.
-- Server chạy trên một máy chủ Linux có kết nối Internet.
+- Server chạy trên máy chủ Windows (Windows Server) có kết nối Internet.
 
 **Ràng buộc thiết kế và triển khai**
 - Web app, giao diện ưu tiên màn hình điện thoại.
 - Frontend: HTML/CSS/JavaScript với React. Backend: Node.js (Express). Cập nhật thời gian thực bằng WebSocket (Socket.IO). Cơ sở dữ liệu: PostgreSQL.
-- Chỉ thanh toán tại quầy (tiền mặt hoặc chuyển khoản, thu ngân xác nhận bằng tay). Không tích hợp cổng thanh toán.
+- Thanh toán tại quầy: hệ thống tạo mã QR chuyển khoản theo chuẩn VietQR, có sẵn số tiền và mã hoá đơn. Thu ngân xác nhận đã nhận tiền bằng tay. Không tích hợp cổng thanh toán, không tự động đối soát với ngân hàng.
 - Phạm vi một quán, một chi nhánh.
 - Tài liệu theo markdown kèm html, quản lý mã nguồn bằng Git.
 
-**Ngoài phạm vi:** quản lý kho, nhân sự và lương, đặt bàn trước, giao hàng, khuyến mãi, ứng dụng mobile riêng.
+**Ngoài phạm vi:** quản lý kho, nhân sự và lương, đặt bàn trước, giao hàng, khuyến mãi, tự động đối soát thanh toán, ứng dụng mobile riêng.
 
 ## 3. Giải pháp đề xuất
 
@@ -49,7 +49,8 @@ Bảng câu chuyện người dùng:
 | Là khách, tôi muốn biết món của mình đang chờ, đang làm hay đã xong | Theo dõi trạng thái món |
 | Là nhân viên bếp, tôi muốn thấy đơn mới ngay khi khách gửi, theo thứ tự đến | Nhận đơn thời gian thực |
 | Là nhân viên bếp, tôi muốn cập nhật trạng thái món và báo hết món | Cập nhật trạng thái, báo hết món |
-| Là thu ngân, tôi muốn xem tổng tiền cả bàn và xác nhận đã thanh toán để đóng bàn | Thanh toán và hoá đơn theo bàn |
+| Là thu ngân, tôi muốn chốt hoá đơn của bàn để hệ thống tính tổng tiền và hiện mã QR thanh toán | Chốt hoá đơn, tạo QR thanh toán |
+| Là thu ngân, tôi muốn xác nhận đã nhận tiền để đóng bàn cho khách mới | Xác nhận thanh toán, đóng bàn |
 | Là quản lý, tôi muốn thêm, sửa, ẩn món, đổi giá và tạo QR cho từng bàn | Quản lý thực đơn, bàn, QR |
 | Là nhân viên, tôi muốn đăng nhập để chỉ thấy chức năng thuộc vai trò của mình | Đăng nhập, phân quyền |
 | Là quản lý, tôi muốn xem doanh thu theo ngày, tuần, tháng và món bán chạy | Thống kê doanh thu |
@@ -61,7 +62,7 @@ Năm chức năng chính và quy định liên quan:
 |---|---|---|
 | 1 | Gọi món qua QR theo bàn | Mỗi bàn có một mã QR riêng. Mỗi bàn chỉ có một phiên gọi món mở tại một thời điểm, nhiều khách cùng bàn gọi vào cùng phiên. Món đang ẩn hoặc hết thì không gọi được. |
 | 2 | Xử lý đơn ở bếp theo thời gian thực | Trạng thái món: chờ, đang làm, xong, huỷ. Chỉ huỷ được món còn ở trạng thái chờ. |
-| 3 | Thanh toán và hoá đơn theo bàn | Hoá đơn gộp mọi món chưa huỷ của phiên. Sau khi thu ngân xác nhận thanh toán, phiên đóng và bàn sẵn sàng cho khách mới. |
+| 3 | Thanh toán và hoá đơn theo bàn | Khi thu ngân chốt hoá đơn, hệ thống tính tổng các món chưa huỷ của phiên, không cho gọi thêm, rồi tạo mã QR chuyển khoản chứa số tiền và mã hoá đơn. Sau khi thu ngân xác nhận đã nhận tiền (QR hoặc tiền mặt), phiên đóng và bàn sẵn sàng cho khách mới. |
 | 4 | Quản lý thực đơn, bàn, QR; đăng nhập, phân quyền | Ba vai trò nhân viên: bếp, thu ngân, quản lý. Chỉ quản lý được sửa thực đơn, giá và bàn. |
 | 5 | Thống kê doanh thu | Chỉ tính hoá đơn đã thanh toán. Chỉ quản lý được xem. |
 
@@ -76,7 +77,7 @@ Hệ thống theo mô hình client-server, ba lớp.
          \----- HTTP + WebSocket ------/
                       |
               Server (Node.js, Express)
-              - API gọi món, thực đơn, hoá đơn, thống kê
+              - API gọi món, thực đơn, hoá đơn, QR thanh toán, thống kê
               - Xác thực và phân quyền
               - Socket.IO đẩy đơn mới / đổi trạng thái
                       |
@@ -96,7 +97,7 @@ Hệ thống theo mô hình client-server, ba lớp.
 | Màn hình bếp | Máy tính bảng hoặc máy tính, 1 thiết bị, luôn kết nối mạng |
 | Quầy thu ngân | Máy tính hoặc máy tính bảng, 1 thiết bị |
 | Máy quản lý | Máy tính hoặc điện thoại của chủ quán |
-| Server | VPS Linux, tối thiểu 2 vCPU, 2 GB RAM, 20 GB ổ đĩa |
+| Server | Máy chủ Windows (Windows Server), tối thiểu 2 vCPU, 4 GB RAM, 40 GB ổ đĩa |
 | Mạng | Wi-Fi ổn định trong quán |
 | Máy in hoá đơn | Không bắt buộc |
 
@@ -131,10 +132,10 @@ Nhóm 4 thành viên, mỗi người khoảng 8 giờ mỗi tuần.
 
 | Khoản | Đơn giá ước tính | Thành tiền |
 |---|---|---|
-| Thuê VPS | 150.000 đ/tháng × 3 tháng | 450.000 đ |
+| Thuê máy chủ Windows (VPS) | 400.000 đ/tháng × 3 tháng | 1.200.000 đ |
 | Tên miền | 250.000 đ/năm | 250.000 đ |
 | In mã QR dán bàn | 5.000 đ × 10 bàn | 50.000 đ |
 | Công sức nhóm | 4 người × 8 giờ × 12 tuần | Không tính tiền |
-| **Tổng** | | **750.000 đ** |
+| **Tổng** | | **1.500.000 đ** |
 
 Các khoản tiền là ước tính, nhóm sẽ cập nhật theo giá thực tế khi triển khai.
