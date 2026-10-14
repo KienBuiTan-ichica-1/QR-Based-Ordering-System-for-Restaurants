@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Project Proposal</title><style>
+:root{--bg:#fff;--fg:#1f2328;--muted:#57606a;--line:#d0d7de;--head:#f6f8fa;--accent:#0b5cad}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#9da7b3;--line:#30363d;--head:#161b22;--accent:#58a6ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 -apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+main{max-width:860px;margin:0 auto;padding:32px 20px 64px}
+h1{font-size:1.9rem;border-bottom:3px solid var(--accent);padding-bottom:.4em;margin-top:0}
+h2{font-size:1.4rem;margin-top:2.2em;border-bottom:1px solid var(--line);padding-bottom:.25em;color:var(--accent)}
+h3{font-size:1.15rem;margin-top:1.6em}
+h4{font-size:1rem;margin-top:1.4em;color:var(--muted)}
+table{border-collapse:collapse;width:100%;margin:1em 0;display:block;overflow-x:auto}
+th,td{border:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
+th{background:var(--head)}
+tbody tr:nth-child(even){background:var(--head)}
+pre{background:var(--head);border:1px solid var(--line);border-radius:6px;padding:14px;overflow-x:auto;font-size:.85rem;line-height:1.45}
+code{font-family:ui-monospace,Consolas,monospace}
+ul{padding-left:1.4em}
+@media print{main{max-width:none;padding:0}h2{break-after:avoid}table,pre{break-inside:avoid}}
+</style></head><body><main>
+<h1>Project Proposal: Hệ thống gọi món bằng QR cho quán ăn</h1>
+<p>Môn: Nhập môn Công nghệ phần mềm. Quy trình: Waterfall.</p>
+<h2>1. Bảng đánh giá thành viên</h2>
+<table>
+<thead>
+<tr>
+<th>MSSV</th>
+<th>Họ tên</th>
+<th>% đóng góp (tối đa 100%)</th>
+<th>Chữ ký</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2>2. Phát biểu bài toán sơ lược</h2>
+<p>Quán ăn nhỏ thường ghi order bằng giấy. Khách phải gọi nhân viên mỗi lần muốn gọi thêm món, đơn dễ ghi sai hoặc thất lạc, bếp không biết đơn nào đến trước, và cuối ngày chủ quán phải cộng tay để biết doanh thu. Giờ cao điểm các vấn đề này nặng hơn vì nhân viên không đủ người.</p>
+<p>Dự án xây dựng một web app cho phép khách quét mã QR dán trên bàn, xem thực đơn và gọi món ngay trên điện thoại. Đơn được chuyển đến bếp tức thì. Thu ngân gộp các đơn của một bàn thành một hoá đơn để thanh toán. Quản lý cập nhật thực đơn và xem thống kê doanh thu.</p>
+<p>Phần mềm có bốn nhóm người dùng: khách, nhân viên bếp, thu ngân và quản lý.</p>
+<p><strong>Môi trường hoạt động</strong>
+- Khách dùng trình duyệt trên điện thoại (Chrome, Safari), không cần cài ứng dụng.
+- Nhân viên dùng trình duyệt trên máy tính bảng hoặc máy tính ở bếp và quầy.
+- Server chạy trên một máy chủ Linux có kết nối Internet.</p>
+<p><strong>Ràng buộc thiết kế và triển khai</strong>
+- Web app, giao diện ưu tiên màn hình điện thoại.
+- Frontend: HTML/CSS/JavaScript với React. Backend: Node.js (Express). Cập nhật thời gian thực bằng WebSocket (Socket.IO). Cơ sở dữ liệu: PostgreSQL.
+- Chỉ thanh toán tại quầy (tiền mặt hoặc chuyển khoản, thu ngân xác nhận bằng tay). Không tích hợp cổng thanh toán.
+- Phạm vi một quán, một chi nhánh.
+- Tài liệu theo markdown kèm html, quản lý mã nguồn bằng Git.</p>
+<p><strong>Ngoài phạm vi:</strong> quản lý kho, nhân sự và lương, đặt bàn trước, giao hàng, khuyến mãi, ứng dụng mobile riêng.</p>
+<h2>3. Giải pháp đề xuất</h2>
+<h3>3.1. Phần mềm</h3>
+<h4>3.1.1. Danh sách các chức năng phần mềm</h4>
+<p>Bảng câu chuyện người dùng:</p>
+<table>
+<thead>
+<tr>
+<th>Nhu cầu</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Là khách, tôi muốn quét QR ở bàn để xem thực đơn mà không cần tải ứng dụng</td>
+<td>Xem thực đơn qua QR</td>
+</tr>
+<tr>
+<td>Là khách, tôi muốn chọn món, số lượng và ghi chú (ít cay, không hành), rồi gửi đơn</td>
+<td>Gọi món</td>
+</tr>
+<tr>
+<td>Là khách, tôi muốn gọi thêm món khi đang ăn mà không phải gọi nhân viên</td>
+<td>Gọi thêm vào bàn đang mở</td>
+</tr>
+<tr>
+<td>Là khách, tôi muốn biết món của mình đang chờ, đang làm hay đã xong</td>
+<td>Theo dõi trạng thái món</td>
+</tr>
+<tr>
+<td>Là nhân viên bếp, tôi muốn thấy đơn mới ngay khi khách gửi, theo thứ tự đến</td>
+<td>Nhận đơn thời gian thực</td>
+</tr>
+<tr>
+<td>Là nhân viên bếp, tôi muốn cập nhật trạng thái món và báo hết món</td>
+<td>Cập nhật trạng thái, báo hết món</td>
+</tr>
+<tr>
+<td>Là thu ngân, tôi muốn xem tổng tiền cả bàn và xác nhận đã thanh toán để đóng bàn</td>
+<td>Thanh toán và hoá đơn theo bàn</td>
+</tr>
+<tr>
+<td>Là quản lý, tôi muốn thêm, sửa, ẩn món, đổi giá và tạo QR cho từng bàn</td>
+<td>Quản lý thực đơn, bàn, QR</td>
+</tr>
+<tr>
+<td>Là nhân viên, tôi muốn đăng nhập để chỉ thấy chức năng thuộc vai trò của mình</td>
+<td>Đăng nhập, phân quyền</td>
+</tr>
+<tr>
+<td>Là quản lý, tôi muốn xem doanh thu theo ngày, tuần, tháng và món bán chạy</td>
+<td>Thống kê doanh thu</td>
+</tr>
+<tr>
+<td>Là khách, tôi muốn gửi đơn và nhận phản hồi trong vòng 3 giây</td>
+<td>Phản hồi nhanh</td>
+</tr>
+</tbody>
+</table>
+<p>Năm chức năng chính và quy định liên quan:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Chức năng</th>
+<th>Quy định</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Gọi món qua QR theo bàn</td>
+<td>Mỗi bàn có một mã QR riêng. Mỗi bàn chỉ có một phiên gọi món mở tại một thời điểm, nhiều khách cùng bàn gọi vào cùng phiên. Món đang ẩn hoặc hết thì không gọi được.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Xử lý đơn ở bếp theo thời gian thực</td>
+<td>Trạng thái món: chờ, đang làm, xong, huỷ. Chỉ huỷ được món còn ở trạng thái chờ.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Thanh toán và hoá đơn theo bàn</td>
+<td>Hoá đơn gộp mọi món chưa huỷ của phiên. Sau khi thu ngân xác nhận thanh toán, phiên đóng và bàn sẵn sàng cho khách mới.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Quản lý thực đơn, bàn, QR; đăng nhập, phân quyền</td>
+<td>Ba vai trò nhân viên: bếp, thu ngân, quản lý. Chỉ quản lý được sửa thực đơn, giá và bàn.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Thống kê doanh thu</td>
+<td>Chỉ tính hoá đơn đã thanh toán. Chỉ quản lý được xem.</td>
+</tr>
+</tbody>
+</table>
+<h4>3.1.2. Kiến trúc tổng thể phần mềm</h4>
+<p>Hệ thống theo mô hình client-server, ba lớp.</p>
+<pre><code> Điện thoại khách        Màn hình bếp / quầy thu ngân / máy quản lý
+ (trình duyệt)                     (trình duyệt)
+        \                              /
+         \----- HTTP + WebSocket ------/
+                      |
+              Server (Node.js, Express)
+              - API gọi món, thực đơn, hoá đơn, thống kê
+              - Xác thực và phân quyền
+              - Socket.IO đẩy đơn mới / đổi trạng thái
+                      |
+               PostgreSQL
+</code></pre>
+<ul>
+<li><strong>Giao diện khách:</strong> mở từ link trong mã QR, link chứa mã bàn. Dùng cho chức năng 1.</li>
+<li><strong>Giao diện nhân viên:</strong> một web app chung, hiển thị màn hình theo vai trò. Màn hình bếp cho chức năng 2, màn hình thu ngân cho chức năng 3, màn hình quản lý cho chức năng 4 và 5.</li>
+<li><strong>Server:</strong> xử lý nghiệp vụ, kiểm tra quyền, ghi và đọc dữ liệu. Khi có đơn mới hoặc đổi trạng thái, server đẩy thông báo qua WebSocket tới bếp và tới khách của bàn đó.</li>
+<li><strong>Cơ sở dữ liệu:</strong> lưu thực đơn, bàn, phiên gọi món, đơn, hoá đơn, tài khoản.</li>
+</ul>
+<h3>3.2. Phần cứng</h3>
+<table>
+<thead>
+<tr>
+<th>Thiết bị</th>
+<th>Yêu cầu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Điện thoại khách</td>
+<td>Có camera quét QR và trình duyệt hiện đại, có mạng</td>
+</tr>
+<tr>
+<td>Màn hình bếp</td>
+<td>Máy tính bảng hoặc máy tính, 1 thiết bị, luôn kết nối mạng</td>
+</tr>
+<tr>
+<td>Quầy thu ngân</td>
+<td>Máy tính hoặc máy tính bảng, 1 thiết bị</td>
+</tr>
+<tr>
+<td>Máy quản lý</td>
+<td>Máy tính hoặc điện thoại của chủ quán</td>
+</tr>
+<tr>
+<td>Server</td>
+<td>VPS Linux, tối thiểu 2 vCPU, 2 GB RAM, 20 GB ổ đĩa</td>
+</tr>
+<tr>
+<td>Mạng</td>
+<td>Wi-Fi ổn định trong quán</td>
+</tr>
+<tr>
+<td>Máy in hoá đơn</td>
+<td>Không bắt buộc</td>
+</tr>
+</tbody>
+</table>
+<h2>4. Kế hoạch phát triển</h2>
+<p>Nhóm dùng mô hình Waterfall. Mỗi giai đoạn kết thúc bằng thành phẩm cụ thể, giai đoạn sau chỉ bắt đầu khi giai đoạn trước nộp xong.</p>
+<table>
+<thead>
+<tr>
+<th>Giai đoạn</th>
+<th>Thời gian</th>
+<th>Thành phẩm</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phân tích yêu cầu</td>
+<td>2 tuần</td>
+<td>Tài liệu đặc tả yêu cầu: bảng yêu cầu chi tiết, use case, mô tả nghiệp vụ</td>
+</tr>
+<tr>
+<td>Thiết kế phần mềm</td>
+<td>2 tuần</td>
+<td>Tài liệu thiết kế: sơ đồ kiến trúc, thiết kế CSDL, thiết kế API, bản phác giao diện</td>
+</tr>
+<tr>
+<td>Cài đặt</td>
+<td>5 tuần</td>
+<td>Mã nguồn trên Git, bản chạy được của năm chức năng</td>
+</tr>
+<tr>
+<td>Kiểm thử</td>
+<td>2 tuần</td>
+<td>Kế hoạch và ca kiểm thử, báo cáo kết quả, danh sách lỗi và việc sửa</td>
+</tr>
+<tr>
+<td>Triển khai, bảo trì</td>
+<td>1 tuần</td>
+<td>Bản triển khai trên server, hướng dẫn cài đặt và sử dụng</td>
+</tr>
+</tbody>
+</table>
+<h2>5. Kế hoạch nhân sự và chi phí</h2>
+<h3>5.1. Nhân sự</h3>
+<p>Nhóm 4 thành viên, mỗi người khoảng 8 giờ mỗi tuần.</p>
+<table>
+<thead>
+<tr>
+<th>Thành viên</th>
+<th>Phụ trách</th>
+<th>Công việc chung</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thành viên 1 (nhóm trưởng)</td>
+<td>Chức năng 3: thanh toán, hoá đơn</td>
+<td>Điều phối, họp nhóm, theo dõi tiến độ, tổng hợp bài nộp</td>
+</tr>
+<tr>
+<td>Thành viên 2</td>
+<td>Chức năng 1: giao diện khách, gọi món qua QR</td>
+<td>Viết tài liệu và kiểm thử phần mình làm</td>
+</tr>
+<tr>
+<td>Thành viên 3</td>
+<td>Chức năng 2: bếp, thời gian thực</td>
+<td>Viết tài liệu và kiểm thử phần mình làm</td>
+</tr>
+<tr>
+<td>Thành viên 4</td>
+<td>Chức năng 4 và 5: quản lý, phân quyền, thống kê; thiết kế CSDL</td>
+<td>Viết tài liệu và kiểm thử phần mình làm</td>
+</tr>
+</tbody>
+</table>
+<p>Ở các giai đoạn phân tích và thiết kế, cả nhóm cùng tham gia, mỗi người viết phần của chức năng mình phụ trách. Khi kiểm thử, các thành viên kiểm thử chéo phần của nhau.</p>
+<h3>5.2. Chi phí dự kiến</h3>
+<table>
+<thead>
+<tr>
+<th>Khoản</th>
+<th>Đơn giá ước tính</th>
+<th>Thành tiền</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Thuê VPS</td>
+<td>150.000 đ/tháng × 3 tháng</td>
+<td>450.000 đ</td>
+</tr>
+<tr>
+<td>Tên miền</td>
+<td>250.000 đ/năm</td>
+<td>250.000 đ</td>
+</tr>
+<tr>
+<td>In mã QR dán bàn</td>
+<td>5.000 đ × 10 bàn</td>
+<td>50.000 đ</td>
+</tr>
+<tr>
+<td>Công sức nhóm</td>
+<td>4 người × 8 giờ × 12 tuần</td>
+<td>Không tính tiền</td>
+</tr>
+<tr>
+<td><strong>Tổng</strong></td>
+<td></td>
+<td><strong>750.000 đ</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Các khoản tiền là ước tính, nhóm sẽ cập nhật theo giá thực tế khi triển khai.</p>
+</main></body></html>
